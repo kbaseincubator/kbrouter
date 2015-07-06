@@ -1,0 +1,10 @@
+web:
+  build: .
+  environment:
+   - DOCKER_CERT_PATH=/ssl
+   - DOCKER_HOST
+  ports:
+   - "5000:5000"
+  volumes:
+   - .:/code
+   - /Users/canon/.docker/machine/machines/dev:/ssl
