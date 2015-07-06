@@ -3,20 +3,17 @@
 
 #############################################
 # Flask & werkzeug HTTP Proxy Sample code.
-# - Code by Jioh L. Jung (ziozzang@gmail.com)
+# - Adapted from Code by Jioh L. Jung (ziozzang@gmail.com)
 #############################################
 import httplib
 import re
 import urllib
 import urlparse
 import json
-import ConfigParser
 import os
 import sys
-import docker
 import socket
 import time
-from docker.utils import kwargs_from_env
 import kbservices
 
 from flask import Flask, Blueprint, request, Response, url_for, jsonify
@@ -196,10 +193,7 @@ def router_request(service, file=""):
 
 app.config.update(dict(DEBUG=DEBUG_FLAG))
 services=kbservices.kbservices()
-#services=read_config('cluster.ini')
 app.register_blueprint(router)
-#cli=init_docker()
-#update_containers(cli)
 
 if __name__ == '__main__':
   app.run(debug=DEBUG_FLAG, host='0.0.0.0', port=LISTEN_PORT)

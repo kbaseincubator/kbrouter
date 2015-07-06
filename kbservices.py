@@ -70,10 +70,9 @@ class kbservices:
       self.IP=os.environ['DOCKER_HOST'].replace('tcp://','').split(':')[0]
     else:
       self.IP=''
-    cp=os.environ['DOCKER_CERT_PATH']
-    tls_config = docker.tls.TLSConfig(client_cert=(cp+'/cert.pem',cp+'/key.pem'),verify=cp+'/server.pem')
     kwargs = kwargs_from_env()
-    kwargs['tls'].assert_hostname = False
+    if 'tls' in kwargs:
+      kwargs['tls'].assert_hostname = False
     client = docker.Client(**kwargs)
     return client
 
