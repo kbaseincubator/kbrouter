@@ -58,7 +58,22 @@ class kbservices:
         services[service]['ip']=''
         services[service]['port']=0
         services[service]['service-port']=int(self.get_item(section,'service-port',0))
-        services[service]['image']=self.get_item(section,'image',self.DEFAULTIMAGE)
+        services[service]['image']=self.get_item(section,'docker-image',self.DEFAULTIMAGE)
+        volumes=[]
+        binds=[]
+        for item in self.get_item(section,'docker-volumes','').split(','):
+          if item!='':
+            (volume,alias)=item.split(':')
+            volumes.append(volume)
+            binds.append(volume+':'+alias)
+        services[service]['volumes']=volumes
+        services[service]['binds']=binds
+        links=dict()
+        for item in self.get_item(section,'docker-links','').split(','):
+          if item!='':
+            (link,alias)=item.split(':')
+            links[link]=alias
+        services[service]['links']=links
         services[service]['section']=section
         services[service]['name']=service
         services[service]['container']=''
@@ -135,10 +150,13 @@ class kbservices:
       return True
     image=sr['image']
     port=sr['service-port']
-    host_config=docker.utils.create_host_config(port_bindings={port:port})
+    host_config=docker.utils.create_host_config(port_bindings={port:port},
+	links=sr['links'],
+	binds=sr['binds'])
     container = self.client.create_container( image=image,
 		name=self.PREFIX+sr['name'],
 		ports=[port],
+		volumes=sr['volumes'],
 		environment=dict(PORT=port,MYSERVICES=sr['section']),
 		host_config=host_config)
     id=container.get('Id')
