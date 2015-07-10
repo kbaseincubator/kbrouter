@@ -207,10 +207,14 @@ if __name__ == '__main__':
         kbs.kill_service(service)
     elif len(sys.argv)==2 and sys.argv[1]=='status':
       print 
-      print '%-40s %s'%('Service','Status')
-      print '==================================================='
+      print '%-30s %5s  %-25s'%('Service','Status','Host:Port')
+      print '==========================================================='
       for s in kbs.get_list():
          status=kbs.isstarted(s)
-         print '%-40s %s'%(s,status)
+         hp=''
+         if status==True:
+           (h,p)=kbs.get_hostport(s)
+           hp='%s:%d'%(h,p)
+         print '%-30s %5s  %-25s'%(s,status,hp)
     else:
       print "Usage: kbservices <start,stop,stautus> [service]"
