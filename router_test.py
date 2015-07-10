@@ -8,7 +8,7 @@ class ProxyTestCase(unittest.TestCase):
 
     def setUp(self):
       self.app = router.app.test_client()
-      self.service='Transform'
+      self.service='transform'
 
     #def tearDown(self):
     #  print "No teardown"

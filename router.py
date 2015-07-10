@@ -71,7 +71,7 @@ def router_list():
   app.logger.debug("listing services")
   list="<ul>\n"
   for s in services.get_list():
-    list+='<li><a href="/services/%s/">%s</a>'%(s,s)
+    list+='<li><a href="/services/%s/">%s</a>\n'%(s,s)
   list+="</ul>"
   return list
 
@@ -81,8 +81,8 @@ def router_kill(service):
   services.kill_service(service)
   return service
 
-@router.route('/services/<service>/', methods=["GET", "POST", "PUT", "DELETE"])
-@router.route('/services/<service>/<path:file>', methods=["GET", "POST", "PUT", "DELETE"])
+@router.route('/services/<service>/', methods=["GET", "POST", "PUT", "DELETE"], strict_slashes=False)
+@router.route('/services/<service>/<path:file>', methods=["GET", "POST", "PUT", "DELETE"], strict_slashes=False)
 def router_request(service, file=""):
     app.logger.debug("S: '%s'" % (service))
 
@@ -98,8 +98,8 @@ def router_request(service, file=""):
       
     # Whitelist a few headers to pass on
     request_headers = {}
-    for h in ["Cookie", "Referer", "X-Csrf-Token"]:
-        if h in request.headers:
+    for h in request.headers.keys():
+        if h.lower() not in ["content-length"]:
             request_headers[h] = request.headers[h]
 
     if request.query_string:
@@ -110,24 +110,20 @@ def router_request(service, file=""):
         path = "/" + file
 
     if request.method == "POST" or request.method == "PUT":
-        form_data = list(iterform(request.form))
-        form_data = urllib.urlencode(form_data)
+        form_data = request.get_data()
         request_headers["Content-Length"] = len(form_data)
     else:
         form_data = None
-
     conn = httplib.HTTPConnection(hostname, port)
     try:
       r=conn.request(request.method, path, body=form_data, headers=request_headers)
       resp = conn.getresponse()
     except socket.error, e:
-      print e
       app.logger.error("Request %s failed to %s on %s:%d/%s"%(request.method,service,hostname,port,path))
       services.update_services()
       return not_found() 
     except:
       e = sys.exc_info()[0]
-      print e
       app.logger.error("Bad response to %s on %s:%d"%(service,hostname,port))
       return not_found()
 
@@ -136,7 +132,7 @@ def router_request(service, file=""):
     response_headers = Headers()
     for key, value in resp.getheaders():
         d[key.lower()] = value
-        if key in ["content-length", "connection", "content-type"]:
+        if key.lower() in ["content-length", "connection", "content-type","transfer-encoding"]:
             continue
 
         if key == "set-cookie":

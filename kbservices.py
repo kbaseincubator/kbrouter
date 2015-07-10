@@ -52,7 +52,7 @@ class kbservices:
         pt=self.get_item(section,'proxytype','proxy')
         if pt=='skip':
           continue
-        service=self.get_item(section,'baseurl',section)
+        service=self.get_item(section,'urlname',section)
         services[service]=dict()
         services[service][STATUS]=STOPPED
         services[service]['ip']=''
@@ -111,7 +111,6 @@ class kbservices:
       sr=self.services[service]
       if sr[STATUS]==STOPPED:
         start_service(service)
-      sr=self.services[service]
       return (sr['ip'],sr['port'])
     else:
       return (None,None)
@@ -135,9 +134,10 @@ class kbservices:
   
   def update_services(self):
     for cont in self.client.containers(all=True):
-      service=cont['Names'][0].replace('/'+self.PREFIX,'')
-      if service in self.services:
-        self.update_service(service,cont['Id'])
+      for name in cont['Names']:
+        service=name.replace('/'+self.PREFIX,'')
+        if service in self.services:
+          self.update_service(service,cont['Id'])
      
   
   def start_service(self,service):

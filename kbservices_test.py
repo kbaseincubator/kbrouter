@@ -7,7 +7,7 @@ class ProxyTestCase(unittest.TestCase):
 
     def setUp(self):
       self.s = kbservices.kbservices()
-      self.service='Transform'
+      self.service='transform'
       self.bad_service='Bogus'
 
     def tearDown(self):
