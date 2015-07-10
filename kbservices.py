@@ -10,6 +10,7 @@ import os
 import docker
 from docker.utils import kwargs_from_env
 import time
+import sys
 
 STARTED='started'
 STOPPED='stopped'
@@ -155,6 +156,7 @@ class kbservices:
 	binds=sr['binds'])
     container = self.client.create_container( image=image,
 		name=self.PREFIX+sr['name'],
+		detach=True,
 		ports=[port],
 		volumes=sr['volumes'],
 		environment=dict(PORT=port,MYSERVICES=sr['section']),
@@ -190,6 +192,21 @@ class kbservices:
 
   
 if __name__ == '__main__':
-    x=kbservices()
-    x.start_service('Transform')
-    x.kill_service('Transform')
+    kbs=kbservices()
+    if len(sys.argv)==3 and sys.argv[1]=='start':
+      service=sys.argv[2]
+      print "Starting "+service
+      kbs.start_service(service)
+    elif len(sys.argv)==3 and sys.argv[1]=='stop':
+      service=sys.argv[2]
+      print "Stop "+service
+      kbs.kill_service(service)
+    elif len(sys.argv)==2 and sys.argv[1]=='status':
+      print 
+      print '%-40s %s'%('Service','Status')
+      print '==================================================='
+      for s in kbs.get_list():
+         status=kbs.isstarted(s)
+         print '%-40s %s'%(s,status)
+    else:
+      print "Usage: kbservices <start,stop,stautus> [service]"
