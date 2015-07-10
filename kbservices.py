@@ -200,7 +200,11 @@ if __name__ == '__main__':
     elif len(sys.argv)==3 and sys.argv[1]=='stop':
       service=sys.argv[2]
       print "Stop "+service
-      kbs.kill_service(service)
+      if service=='all':
+        for s in kbs.get_list():
+          kbs.kill_service(s)
+      else:
+        kbs.kill_service(service)
     elif len(sys.argv)==2 and sys.argv[1]=='status':
       print 
       print '%-40s %s'%('Service','Status')
