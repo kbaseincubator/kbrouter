@@ -61,12 +61,12 @@ class kbservices:
         services[service]['service-port']=int(self.get_item(section,'service-port',0))
         services[service]['image']=self.get_item(section,'docker-image',self.DEFAULTIMAGE)
         volumes=[]
-        binds=[]
+        binds=dict()
         for item in self.get_item(section,'docker-volumes','').split(','):
           if item!='':
             (volume,alias)=item.split(':')
             volumes.append(volume)
-            binds.append(volume+':'+alias)
+            binds[alias]=dict(bind=volume,mode='rw')
         services[service]['volumes']=volumes
         services[service]['binds']=binds
         links=dict()
