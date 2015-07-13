@@ -51,8 +51,13 @@ class kbservices:
         if type!='service':
           continue
         pt=self.get_item(section,'proxytype','proxy')
-        if pt=='skip':
+        # TODO: figure out how to manage these too
+        if section in ['www','mongo','mysql']:
           continue
+        # TODO: figure out the best way to do this.
+        #       For now, allow everything
+        #if pt=='skip':
+        #  continue
         service=self.get_item(section,'urlname',section)
         services[service]=dict()
         services[service][STATUS]=STOPPED
