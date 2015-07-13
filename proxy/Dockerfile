@@ -1,4 +1,3 @@
-# Dockerfile that builds a kbase router
 #
 # Shane Canon scanon@lbl.gov
 #
@@ -9,9 +8,8 @@
 # Made available under the KBase Open Source License
 #
 
-FROM python:2.7
+FROM nginx:1.9.2
 MAINTAINER Shane Canon scanon@lbl.gov
-ADD . /code
-WORKDIR /code
-RUN pip install -r requirements.txt
-CMD python router.py
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
