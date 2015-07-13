@@ -16,7 +16,7 @@ www:
   links:
    - router
   ports:
-   - "6080:80"
-   - "6443:443"
+   - "8080:80"
+   - "8443:443"
   volumes:
    - ssl:/etc/nginx/ssl/

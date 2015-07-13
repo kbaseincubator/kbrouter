@@ -70,8 +70,8 @@ class kbservices:
         for item in self.get_item(section,'docker-volumes','').split(','):
           if item!='':
             (volume,alias)=item.split(':')
-            volumes.append(volume)
-            binds[alias]=dict(bind=volume,mode='rw')
+            volumes.append(alias)
+            binds[volume]=dict(bind=alias,mode='rw')
         services[service]['volumes']=volumes
         services[service]['binds']=binds
         links=dict()
@@ -214,7 +214,7 @@ if __name__ == '__main__':
       print 
       print '%-30s %5s  %-25s'%('Service','Status','Host:Port')
       print '==========================================================='
-      for s in kbs.get_list():
+      for s in sorted(kbs.get_list()):
          status=kbs.isstarted(s)
          hp=''
          if status==True:

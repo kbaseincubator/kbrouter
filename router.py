@@ -81,8 +81,8 @@ def router_kill(service):
   services.kill_service(service)
   return service
 
-@router.route('/services/<service>/', methods=["GET", "POST", "PUT", "DELETE"], strict_slashes=False)
-@router.route('/services/<service>/<path:file>', methods=["GET", "POST", "PUT", "DELETE"], strict_slashes=False)
+@router.route('/services/<service>/', methods=["OPTIONS", "GET", "POST", "PUT", "DELETE"], strict_slashes=False)
+@router.route('/services/<service>/<path:file>', methods=["OPTIONS", "GET", "POST", "PUT", "DELETE"], strict_slashes=False)
 def router_request(service, file=""):
     app.logger.debug("S: '%s'" % (service))
 
