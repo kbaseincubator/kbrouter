@@ -167,19 +167,6 @@ def router_request(service, file=""):
     #root = url_for(".router_request")
     contents = resp.read()
 
-    # Restructing Contents.
-    if d["content-type"].find("application/json") >= 0:
-        # JSON format conentens will be modified here.
-        jc = json.loads(contents)
-        if jc.has_key("nodes"):
-            del jc["nodes"]
-        contents = json.dumps(jc)
-
-    #else:
-    #    # Generic HTTP.
-    #    for regex in REGEXES:
-    #       contents = regex.sub(r'\1%s' % root, contents)
-
     flask_response = Response(response=contents,
                               status=resp.status,
                               headers=response_headers,
@@ -192,4 +179,4 @@ services=kbservices.kbservices()
 app.register_blueprint(router)
 
 if __name__ == '__main__':
-  app.run(debug=DEBUG_FLAG, host='0.0.0.0', port=LISTEN_PORT)
+  app.run(debug=DEBUG_FLAG, host='0.0.0.0', port=LISTEN_PORT, threaded=True)
