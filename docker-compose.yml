@@ -10,7 +10,6 @@ router:
   volumes:
    - .:/code
    - /Users/canon/.docker/machine/machines/dev:/ssl
-
 www:
   build: proxy/
   links:

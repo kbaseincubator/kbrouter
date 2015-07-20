@@ -210,6 +210,11 @@ if __name__ == '__main__':
           kbs.kill_service(s)
       else:
         kbs.kill_service(service)
+    elif len(sys.argv)==3 and sys.argv[1]=='restart':
+      service=sys.argv[2]
+      print "Restart "+service
+      kbs.kill_service(service)
+      kbs.start_service(service)
     elif len(sys.argv)==2 and sys.argv[1]=='status':
       print 
       print '%-30s %5s  %-25s'%('Service','Status','Host:Port')
