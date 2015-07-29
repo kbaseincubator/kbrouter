@@ -9,7 +9,7 @@ router:
    - "5000:5000"
   volumes:
    - .:/code
-   - /Users/canon/.docker/machine/machines/dev:/ssl
+   - /var/run/docker.sock:/var/run/docker.sock
 www:
   build: proxy/
   links:

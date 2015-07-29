@@ -140,10 +140,11 @@ class kbservices:
   
   def update_services(self):
     for cont in self.client.containers(all=True):
-      for name in cont['Names']:
-        service=name.replace('/'+self.PREFIX,'')
-        if service in self.services:
-          self.update_service(service,cont['Id'])
+      if 'Names' in cont and cont['Names'] is not None:
+        for name in cont['Names']:
+          service=name.replace('/'+self.PREFIX,'')
+          if service in self.services:
+            self.update_service(service,cont['Id'])
      
   
   def start_service(self,service):
