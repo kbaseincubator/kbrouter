@@ -1,10 +1,6 @@
 router:
   build: .
   environment:
-   - DOCKER_CERT_PATH=/ssl
-   - DOCKER_HOST
-   - DOCKER_TLS_VERIFY
-   - DOCKER_MACHINE_NAME
   ports:
    - "5000:5000"
   volumes:
