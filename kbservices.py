@@ -116,7 +116,8 @@ class kbservices:
     if service in self.services:
       sr=self.services[service]
       if sr[STATUS]==STOPPED:
-        start_service(service)
+        if not self.start_service(service):
+          return (None,None)
       return (sr['ip'],sr['port'])
     else:
       return (None,None)
@@ -151,7 +152,6 @@ class kbservices:
     self.update_services()
     if service not in self.services:
       return False
-    
     sr=self.services[service]
     if sr[STATUS]==STARTED:
       return True
@@ -160,15 +160,23 @@ class kbservices:
     host_config=docker.utils.create_host_config(port_bindings={port:port},
 	links=sr['links'],
 	binds=sr['binds'])
-    container = self.client.create_container( image=image,
-		name=self.PREFIX+sr['name'],
+    try:
+      container = self.client.create_container( image=image,
+    		name=self.PREFIX+sr['name'],
 		detach=True,
 		ports=[port],
 		volumes=sr['volumes'],
 		environment=dict(PORT=port,MYSERVICES=sr['section']),
 		host_config=host_config)
+    except:
+      print "Unexpected error creating container:", sys.exc_info()[0]
+      return False
     id=container.get('Id')
-    response = self.client.start(container=id)
+    try: 
+      response = self.client.start(container=id)
+    except:
+      print "Unexpected error starting container:", sys.exc_info()[0]
+      return False
     retry=self.RETRY
     while retry>0:
       retry-=1
@@ -202,7 +210,8 @@ if __name__ == '__main__':
     if len(sys.argv)==3 and sys.argv[1]=='start':
       service=sys.argv[2]
       print "Starting "+service
-      kbs.start_service(service)
+      if not kbs.start_service(service):
+         sys.exit("Could not start service "+service)
     elif len(sys.argv)==3 and sys.argv[1]=='stop':
       service=sys.argv[2]
       print "Stop "+service
@@ -215,7 +224,8 @@ if __name__ == '__main__':
       service=sys.argv[2]
       print "Restart "+service
       kbs.kill_service(service)
-      kbs.start_service(service)
+      if not kbs.start_service(service):
+         sys.exit("Could not start service "+service)
     elif len(sys.argv)==2 and sys.argv[1]=='status':
       print 
       print '%-30s %5s  %-25s'%('Service','Status','Host:Port')
@@ -225,7 +235,8 @@ if __name__ == '__main__':
          hp=''
          if status==True:
            (h,p)=kbs.get_hostport(s)
-           hp='%s:%d'%(h,p)
+           if (h,p) != (None,None):
+             hp='%s:%d'%(h,p)
          print '%-30s %5s  %-25s'%(s,status,hp)
     else:
       print "Usage: kbservices <start,stop,stautus> [service]"
