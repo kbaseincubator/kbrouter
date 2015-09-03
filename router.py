@@ -92,7 +92,11 @@ def router_request(service, file=""):
 
     if services.isstarted(service)!=True:
       app.logger.info("starting: '%s'" % (service))
-      services.start_service(service)
+      try:
+        services.start_service(service)
+      except:
+        print "Start_service failed: ", sys.exc_info()[0]
+        return not_found()
       time.sleep(1)
     (hostname,port)=services.get_hostport(service)
       

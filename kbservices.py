@@ -170,13 +170,13 @@ class kbservices:
 		host_config=host_config)
     except:
       print "Unexpected error creating container:", sys.exc_info()[0]
-      return False
+      raise 
     id=container.get('Id')
     try: 
       response = self.client.start(container=id)
     except:
       print "Unexpected error starting container:", sys.exc_info()[0]
-      return False
+      raise
     retry=self.RETRY
     while retry>0:
       retry-=1
@@ -210,8 +210,7 @@ if __name__ == '__main__':
     if len(sys.argv)==3 and sys.argv[1]=='start':
       service=sys.argv[2]
       print "Starting "+service
-      if not kbs.start_service(service):
-         sys.exit("Could not start service "+service)
+      kbs.start_service(service)
     elif len(sys.argv)==3 and sys.argv[1]=='stop':
       service=sys.argv[2]
       print "Stop "+service
@@ -224,8 +223,7 @@ if __name__ == '__main__':
       service=sys.argv[2]
       print "Restart "+service
       kbs.kill_service(service)
-      if not kbs.start_service(service):
-         sys.exit("Could not start service "+service)
+      kbs.start_service(service)
     elif len(sys.argv)==2 and sys.argv[1]=='status':
       print 
       print '%-30s %5s  %-25s'%('Service','Status','Host:Port')
