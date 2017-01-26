@@ -9,7 +9,7 @@
 # Made available under the KBase Open Source License
 #
 
-FROM python:2.7
+FROM python:2.7-slim
 MAINTAINER Shane Canon scanon@lbl.gov
 ADD . /code
 WORKDIR /code
